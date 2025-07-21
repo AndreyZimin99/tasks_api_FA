@@ -1,58 +1,36 @@
-from typing import Generic, TypeVar
-from fastapi import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from pydantic import UUID4
+from sqlalchemy import Sequence, delete, insert, select, update
 from sqlalchemy.orm import selectinload
-from sqlalchemy import UUID
+from typing import TYPE_CHECKING, Any
+
+from src.models.models import Task, User
+from src.utils.repository import SqlAlchemyRepository
+
+if TYPE_CHECKING:
+    from sqlalchemy.engine import Result
 
 
-from src.models.base import Base
-from src.models.models import Task
+class TaskRepository(SqlAlchemyRepository[Task]):
+    _model = Task
 
-M = TypeVar('M', bound=Base)
-
-
-class TaskRepository(Generic[M]):
-
-    def __init__(self, session: AsyncSession) -> None:
-        self.session = session
-
-    async def create_task(self, session: AsyncSession, task_data) -> Task:
-        task = Task(**task_data)
-        session.add(task)
-        await session.flush()
-        return task
-
-    async def get_task(self, session: AsyncSession, task_id: UUID) -> Task:
-        result = await session.execute(select(Task).options(
-            selectinload(Task.watchers),
-            selectinload(Task.executors)
-        ).where(Task.id == task_id))
+    async def get_task(self, task_id: UUID4) -> Task:
+        result = await self._session.execute(select(self._model).options(
+            selectinload(self._model.watchers),
+            selectinload(self._model.executors)
+        ).where(self._model.id == task_id))
         task = result.scalar_one_or_none()
-        if not task:
-            raise HTTPException(status_code=404, detail='Задача не найдена')
         return task
 
-    async def get_all_tasks(self, session: AsyncSession):
-        result = await session.execute(select(Task).options(
-            selectinload(Task.watchers),
-            selectinload(Task.executors))
+    async def get_all_tasks(self) -> Sequence[Task]:
+        result = await self._session.execute(select(self._model).options(
+            selectinload(self._model.watchers),
+            selectinload(self._model.executors))
         )
         return result.scalars().all()
 
-    async def delete_task(self, session: AsyncSession, task_id: UUID) -> None:
-        task = await self.get_task(session, task_id)
-        if task:
-            await session.delete(task)
+    # async def add_task(self, **kwargs: Any):
+    #     query = insert(self._model).values(**kwargs).returning(self._model)
+    #     obj: Result = await self._session.execute(query)
+    #     return obj.scalar_one()
 
-    async def update_task(
-        self,
-        session: AsyncSession,
-        task_id: UUID,
-        task_data
-    ) -> Task | None:
-        task = await self.get_task(session, task_id)
-        if task:
-            for key, value in task_data.items():
-                setattr(task, key, value)
-        return task
+    

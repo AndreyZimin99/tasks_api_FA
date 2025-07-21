@@ -1,6 +1,5 @@
 from uuid import uuid4
 from datetime import datetime
-from enum import Enum
 from typing import Annotated
 
 from sqlalchemy import ForeignKey, Text, text, UUID
@@ -8,6 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 from .base import Base, str_100, str_120, str_255
+from utils.status import Status
+from schemas.task import TaskResponse
 
 uuidpk = Annotated[
     uuid4,
@@ -34,12 +35,6 @@ class User(Base):
         back_populates='executors',
         secondary='task_executors',
     )
-
-
-class Status(Enum):
-    todo = 'todo'
-    in_progress = 'in_progress'
-    done = 'done'
 
 
 class Task(Base):
@@ -76,6 +71,9 @@ class Task(Base):
         back_populates='executioning_tasks',
         secondary='task_executors',
     )
+
+    def to_schema(self) -> TaskResponse:
+        return TaskResponse(**self.__dict__)
 
 
 class Board(Base):

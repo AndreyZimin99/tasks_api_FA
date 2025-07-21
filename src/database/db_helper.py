@@ -1,44 +1,40 @@
-from asyncio import current_task
+from collections.abc import AsyncGenerator
+from uuid import uuid4
 
 from sqlalchemy.ext.asyncio import (
+    AsyncConnection,
     AsyncSession,
-    create_async_engine,
     async_sessionmaker,
-    async_scoped_session
+    create_async_engine
 )
 
 from src.config import settings
 
+async_engine = create_async_engine(
+    url=settings.DATABASE_URL,
+    echo=False,
+    future=True,
+    pool_size=50,
+    max_overflow=100,
+    connect_args={
+        'prepared_statement_name_func': lambda:  f'__asyncpg_{uuid4()}__',
+    },
+)
 
-class DatabaseHelper:
-    def __init__(self, url: str):
-        self.engine = create_async_engine(
-            url=url,
-            echo=True
-        )
-        self.session_factory = async_sessionmaker(
-            bind=self.engine,
-            autoflush=False,
-            autocommit=False,
-            expire_on_commit=False,
-        )
+async_session_maker = async_sessionmaker(
+    bind=async_engine,
+    class_=AsyncSession,
+    autoflush=False,
+    autocommit=False,
+    expire_on_commit=False,
+)
 
-    def get_scoped_session(self):
-        session = async_scoped_session(
-            session_factory=self.session_factory,
-            scopefunc=current_task,
-        )
-        return session
 
-    async def session_dependency(self) -> AsyncSession:
-        async with self.session_factory() as session:
-            yield session
-            await session.close()
+async def get_async_connection() -> AsyncGenerator[AsyncConnection, None]:
+    async with async_engine.begin() as conn:
+        yield conn
 
-    async def scoped_session_dependency(self) -> AsyncSession:
-        session = self.get_scoped_session()
+
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_maker() as session:
         yield session
-        await session.close()
-
-
-db_helper = DatabaseHelper(url=settings.DATABASE_URL)

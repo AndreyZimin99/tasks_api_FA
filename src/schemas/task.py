@@ -2,15 +2,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, UUID4
 from datetime import datetime
 from typing import List
 
-from src.models.models import Status
-
-
-class UserDB(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: UUID4
-    full_name: str
-    email: str
+from utils.status import Status
+from .user import UserDB
 
 
 class TaskBase(BaseModel):

@@ -36,6 +36,7 @@ async def check_active_connections(connection, db_name):
     count = result.scalar()
     return count > 0
 
+
 @pytest_asyncio.fixture(scope='session', autouse=True)
 async def create_test_db(event_loop: None) -> None:
     assert settings.MODE == 'TEST'
@@ -154,5 +155,5 @@ def fake_uow(transaction_session: AsyncSession) -> FakeUnitOfWork:
 async def async_client(fake_uow: FakeUnitOfWork) -> AsyncGenerator[AsyncClient, None]:
     """Returns async test client."""
     app.dependency_overrides[UnitOfWork] = lambda: fake_uow
-    async with AsyncClient(app=app, base_url='http://test') as ac:
+    async with AsyncClient(base_url='http://localhost:8000') as ac:
         yield ac

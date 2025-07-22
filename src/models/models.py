@@ -7,8 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 from .base import Base, str_100, str_120, str_255
-from utils.status import Status
-from schemas.task import TaskResponse
+from src.utils.status import Status
+from src.schemas.task import TaskResponse
 
 uuidpk = Annotated[
     uuid4,

@@ -5,7 +5,7 @@ from tests.utils import RequestTestCase
 
 TEST_TASK_ROUTE_CREATE_PARAMS: list[RequestTestCase] = [
     RequestTestCase(
-        url=f'{BASE_ENDPOINT_URL}/task/',
+        url=f'{BASE_ENDPOINT_URL}/tasks/',
         headers={},
         data={
             'title': 'First Test Task',

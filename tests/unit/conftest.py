@@ -20,7 +20,7 @@ async def setup_tasks(transaction_session: AsyncSession, tasks: tuple[dict]) -> 
 
 
 @pytest_asyncio.fixture
-async def setup_users(setup_tasks: None, transaction_session: AsyncSession, users: tuple[dict]) -> None:
+async def setup_users(transaction_session: AsyncSession, users: tuple[dict]) -> None:
     """Creates users that will only exist within the session."""
     await bulk_save_models(transaction_session, User, users)
 

@@ -29,8 +29,8 @@ class TaskCreateRequest(TaskBase):
     sprint_id: UUID4 | None = None
     board_id: UUID4 | None = None
     group_id: UUID4 | None = None
-    watchers: List[UserDB] = []
-    executors: List[UserDB] = []
+    watchers: List[UserDB] | None = []
+    executors: List[UserDB] | None = []
 
 
 class TaskUpdateRequest(BaseModel):
@@ -66,5 +66,5 @@ class TaskResponse(TaskBase):
     sprint_id: UUID4 | None
     board_id: UUID4 | None
     group_id: UUID4 | None
-    watchers: List[UserDB]
-    executors: List[UserDB]
+    watchers: List[UserDB] | None
+    executors: List[UserDB] | None

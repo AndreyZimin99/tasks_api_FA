@@ -63,11 +63,11 @@ class Task(Base):
     group_id: Mapped[UUID | None] = mapped_column(ForeignKey(
         'groups.id',
         ondelete='CASCADE'))
-    watchers: Mapped[list['User']] = relationship(
+    watchers: Mapped[list['User'] | None] = relationship(
         back_populates='watching_tasks',
         secondary='task_watchers',
     )
-    executors: Mapped[list['User']] = relationship(
+    executors: Mapped[list['User'] | None] = relationship(
         back_populates='executioning_tasks',
         secondary='task_executors',
     )

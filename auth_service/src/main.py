@@ -1,8 +1,8 @@
 import uvicorn
 from fastapi import FastAPI
 
-from auth import router as jwt_router
-from utils import get_rabbit_connection
+from src.auth import router as jwt_router
+from src.utils import get_rabbit_connection
 
 
 auth = FastAPI()
@@ -24,4 +24,4 @@ async def shutdown_event():
 
 
 if __name__ == '__main__':
-    uvicorn.run('auth_service.main:auth', reload=True)
+    uvicorn.run('src.main:auth', reload=True, port=8001)

@@ -7,10 +7,10 @@ from fastapi import (
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.token import TokenInfo
-from schemas.user import CreateUser, UserSchema
-import utils as auth_utils
-from view import create_user, get_user_by_email, get_current_token_payload
+from src.schemas.token import TokenInfo
+from src.schemas.user import CreateUser, UserSchema
+from src import utils as auth_utils
+from src.view import create_user, get_user_by_email, get_current_token_payload
 
 from .database import db_helper
 

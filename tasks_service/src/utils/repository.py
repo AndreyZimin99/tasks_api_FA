@@ -9,7 +9,7 @@ from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models import Base
+from src.models import Base
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Result

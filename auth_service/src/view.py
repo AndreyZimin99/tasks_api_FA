@@ -4,10 +4,10 @@ from sqlalchemy.future import select
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import Depends, HTTPException, status
 
-import utils as auth_utils
-from models.user import User
-from schemas.user import CreateUser, UserSchema
-from utils import send_email_event
+from src import utils as auth_utils
+from src.models.user import User
+from src.schemas.user import CreateUser, UserSchema
+from src.utils import send_email_event
 
 http_bearer = HTTPBearer()
 

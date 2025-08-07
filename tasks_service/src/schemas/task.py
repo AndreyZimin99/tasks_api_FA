@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, UUID4
 from datetime import datetime
 from typing import List
 
-from utils.custom_types import Status
+from src.utils.custom_types import Status
 from .user import UserDB
 
 

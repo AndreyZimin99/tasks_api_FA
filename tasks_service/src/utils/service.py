@@ -8,8 +8,8 @@ from uuid import UUID
 from fastapi import Depends, HTTPException
 from starlette.status import HTTP_404_NOT_FOUND
 
-from utils.repository import AbstractRepository
-from utils.unit_of_work import AbstractUnitOfWork, UnitOfWork
+from src.utils.repository import AbstractRepository
+from src.utils.unit_of_work import AbstractUnitOfWork, UnitOfWork
 
 T = TypeVar('T', bound=Callable[..., Awaitable[Any]])
 

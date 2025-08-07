@@ -3,32 +3,30 @@ from fastapi import FastAPI
 import asyncio
 import aio_pika
 
-from api.v1.routers.task import router as task_router
+from src.api.v1.routers.task import router as task_router
 
 app = FastAPI()
 app.include_router(task_router, prefix='/tasks')
 
 
-RABBITMQ_URL = 'amqp://guest:guest@rabbitmq/'
+RABBITMQ_URL = 'amqp://user:password@rabbitmq:5672'
 
 
 rabbit_connection = None
 
-
-async def wait_for_rabbitmq():
-    while True:
-        try:
-            connection = await aio_pika.connect_robust(RABBITMQ_URL)
-            return connection
-        except Exception as e:
-            print(f"Waiting for RabbitMQ to be ready... {e}")
-            await asyncio.sleep(5)
+# rabbit_connection = await aio_pika.connect_robust(RABBITMQ_URL)
 
 
 async def get_rabbit_connection():
     global rabbit_connection
     if rabbit_connection is None or rabbit_connection.is_closed:
-        rabbit_connection = await wait_for_rabbitmq()
+        while True:
+            try:
+                rabbit_connection = await aio_pika.connect_robust(RABBITMQ_URL)
+                break
+            except Exception:
+                print("RabbitMQ not ready, retrying in 3 seconds...")
+                await asyncio.sleep(3)
         return rabbit_connection
 
 
@@ -61,7 +59,7 @@ def get_task_count_for_user(user_id):
 
 
 async def consume_messages():
-    connection = get_rabbit_connection()
+    connection = await get_rabbit_connection()
     channel = await connection.channel()
 
     queue = await channel.declare_queue("task_request_queue")

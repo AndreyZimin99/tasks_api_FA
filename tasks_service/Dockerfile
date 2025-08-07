@@ -1,6 +1,6 @@
 FROM python:3.11.2
 
-WORKDIR /src
+WORKDIR /app
 
 RUN pip install gunicorn==20.1.0 
 
@@ -12,6 +12,6 @@ RUN pip install -r requirements.txt --no-cache-dir
 COPY . .
 
 
-CMD ["gunicorn", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "main:app"]
+CMD ["gunicorn", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "src.main:app"]
 
 # "wait-for-it", "rabbitmq:5672", "--",

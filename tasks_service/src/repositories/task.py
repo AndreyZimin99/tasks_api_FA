@@ -3,8 +3,8 @@ from sqlalchemy import Sequence, delete, insert, select, update
 from sqlalchemy.orm import selectinload
 from typing import TYPE_CHECKING, Any
 
-from models.models import Task, User, TaskExecutors, TaskWatchers
-from utils.repository import SqlAlchemyRepository
+from src.models.models import Task, User, TaskExecutors, TaskWatchers
+from src.utils.repository import SqlAlchemyRepository
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Result

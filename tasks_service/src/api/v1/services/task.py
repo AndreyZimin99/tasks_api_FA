@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING
 
 from pydantic import UUID4
 
-from schemas.task import TaskCreateRequest, TaskUpdateRequest, TaskResponse
-from utils.service import BaseService, transaction_mode
+from src.schemas.task import TaskCreateRequest, TaskUpdateRequest, TaskResponse
+from src.utils.service import BaseService, transaction_mode
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

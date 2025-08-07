@@ -7,17 +7,7 @@ import uvicorn
 
 app = FastAPI()
 
-RABBITMQ_URL = "amqp://guest:guest@localhost/"
-
-
-async def wait_for_rabbitmq():
-    while True:
-        try:
-            connection = await aio_pika.connect_robust(RABBITMQ_URL)
-            return connection
-        except Exception as e:
-            print(f"Waiting for RabbitMQ to be ready... {e}")
-            await asyncio.sleep(5)
+RABBITMQ_URL = 'amqp://user:password@rabbitmq/'
 
 
 async def on_message(message: aio_pika.IncomingMessage):
@@ -30,7 +20,13 @@ async def on_message(message: aio_pika.IncomingMessage):
 
 async def consume():
     # connection = await aio_pika.connect_robust(RABBITMQ_URL)
-    connection = await wait_for_rabbitmq()
+    while True:
+        try:
+            connection = await aio_pika.connect_robust(RABBITMQ_URL)
+            break
+        except Exception:
+            print("RabbitMQ not ready, retrying in 3 seconds...")
+            await asyncio.sleep(3)
     channel = await connection.channel()
     queue = await channel.declare_queue('email.notifications')
     await queue.consume(on_message)

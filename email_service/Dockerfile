@@ -1,6 +1,6 @@
 FROM python:3.11.2
 
-WORKDIR /email_service
+WORKDIR /app
 
 RUN pip install gunicorn==20.1.0 
 

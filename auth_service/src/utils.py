@@ -6,9 +6,10 @@ import jwt
 from passlib.context import CryptContext
 import uuid
 
-from config import settings
+from src.config import settings
 
-RABBITMQ_URL = "amqp://guest:guest@localhost/"
+rabbit_connection = None
+RABBITMQ_URL = 'amqp://user:password@rabbitmq/'
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -56,18 +57,8 @@ def verify_password(
     return pwd_context.verify(password.encode(), hashed_password)
 
 
-async def wait_for_rabbitmq():
-    while True:
-        try:
-            connection = await aio_pika.connect_robust(RABBITMQ_URL)
-            return connection
-        except Exception as e:
-            print(f"Waiting for RabbitMQ to be ready... {e}")
-            await asyncio.sleep(5)
-
-
 async def send_email_event(user_id: str, email: str):
-    connection = await wait_for_rabbitmq()
+    connection = await aio_pika.connect_robust(RABBITMQ_URL)
     async with connection:
         channel = await connection.channel()
         message = {
@@ -83,11 +74,23 @@ async def send_email_event(user_id: str, email: str):
         )
 
 
+# async def get_rabbit_connection():
+#     global rabbit_connection
+#     if rabbit_connection is None or rabbit_connection.is_closed:
+#         rabbit_connection = await aio_pika.connect_robust(RABBITMQ_URL)
+#     return rabbit_connection
+
 async def get_rabbit_connection():
     global rabbit_connection
     if rabbit_connection is None or rabbit_connection.is_closed:
-        rabbit_connection = await wait_for_rabbitmq()
-    return rabbit_connection
+        while True:
+            try:
+                rabbit_connection = await aio_pika.connect_robust(RABBITMQ_URL)
+                break
+            except Exception:
+                print("RabbitMQ not ready, retrying in 3 seconds...")
+                await asyncio.sleep(3)
+        return rabbit_connection
 
 
 async def get_task_count(user_id: str):

@@ -11,7 +11,6 @@ class TestTaskRouter:
 
     @staticmethod
     @pytest.mark.usefixtures('setup_users')
-    @pytest.mark.usefixtures('setup_tasks')
     @pytest.mark.parametrize('case', testing_cases.TEST_TASK_ROUTE_CREATE_PARAMS)
     async def test_create(
         case: RequestTestCase,

@@ -9,7 +9,7 @@ from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.models import Base
+from models import Base
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Result
@@ -58,12 +58,12 @@ class SqlAlchemyRepository(AbstractRepository, Generic[M]):
         self._session = session
 
     async def add_one_and_get_obj(self, **kwargs: Any) -> M:
-        # query = insert(self._model).values(**kwargs).returning(self._model)
-        # obj: Result = await self._session.execute(query)
-        # return obj.scalar_one()
-        obj = self._model(**kwargs)
-        self._session.add(obj)
-        return obj
+        query = insert(self._model).values(**kwargs).returning(self._model)
+        obj: Result = await self._session.execute(query)
+        return obj.scalar_one()
+        # obj = self._model(**kwargs)
+        # self._session.add(obj)
+        # return obj
 
     async def get_by_filter_one_or_none(self, **kwargs: Any) -> M | None:
         query = select(self._model).filter_by(**kwargs)

@@ -3,8 +3,8 @@ from pydantic import UUID4
 from fastapi import APIRouter, Depends
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
-from src.schemas.task import TaskCreateRequest, TaskUpdateRequest, TaskResponse
-from src.api.v1.services.task import TaskService
+from schemas.task import TaskCreateRequest, TaskUpdateRequest, TaskResponse
+from api.v1.services.task import TaskService
 
 
 router = APIRouter(tags=['Task'])

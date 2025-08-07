@@ -2,13 +2,13 @@ from typing import TYPE_CHECKING
 
 from pydantic import UUID4
 
-from src.schemas.task import TaskCreateRequest, TaskUpdateRequest, TaskResponse
-from src.utils.service import BaseService, transaction_mode
+from schemas.task import TaskCreateRequest, TaskUpdateRequest, TaskResponse
+from utils.service import BaseService, transaction_mode
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from src.models import Task
+    from models import Task
 
 
 class TaskService(BaseService):
@@ -17,7 +17,7 @@ class TaskService(BaseService):
     @transaction_mode
     async def create_task(self, task: TaskCreateRequest) -> TaskResponse:
         """Create task."""
-        created_task: Task = await self.uow.task.add_one_and_get_obj(**task.model_dump())
+        created_task: Task = await self.uow.task.add_one_and_get_task(**task.model_dump())
         return created_task
 
     @transaction_mode

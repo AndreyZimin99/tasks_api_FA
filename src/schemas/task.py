@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, UUID4
 from datetime import datetime
 from typing import List
 
-from src.utils.status import Status
+from utils.custom_types import Status
 from .user import UserDB
 
 
@@ -29,8 +29,8 @@ class TaskCreateRequest(TaskBase):
     sprint_id: UUID4 | None = None
     board_id: UUID4 | None = None
     group_id: UUID4 | None = None
-    watchers: List[UserDB] | None = []
-    executors: List[UserDB] | None = []
+    watchers: List[UserDB] = []
+    executors: List[UserDB] = []
 
 
 class TaskUpdateRequest(BaseModel):
@@ -66,5 +66,5 @@ class TaskResponse(TaskBase):
     sprint_id: UUID4 | None
     board_id: UUID4 | None
     group_id: UUID4 | None
-    watchers: List[UserDB] | None
-    executors: List[UserDB] | None
+    watchers: List[UserDB]
+    executors: List[UserDB]

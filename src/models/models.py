@@ -7,8 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 from .base import Base, str_100, str_120, str_255
-from src.utils.status import Status
-from src.schemas.task import TaskResponse
+from utils.custom_types import Status
+from schemas.task import TaskResponse
 
 uuidpk = Annotated[
     uuid4,
@@ -24,9 +24,6 @@ class User(Base):
     __tablename__ = 'users'
 
     id: Mapped[uuidpk]
-    full_name: Mapped[str_100]
-    email: Mapped[str_120] = mapped_column(unique=True)
-    created_at: Mapped[created_at_user]
     watching_tasks: Mapped[list['Task']] = relationship(
         back_populates='watchers',
         secondary='task_watchers',
@@ -35,6 +32,23 @@ class User(Base):
         back_populates='executors',
         secondary='task_executors',
     )
+
+
+# class User(Base):
+#     __tablename__ = 'users'
+
+#     id: Mapped[uuidpk]
+#     full_name: Mapped[str_100]
+#     email: Mapped[str_120] = mapped_column(unique=True)
+#     created_at: Mapped[created_at_user]
+#     watching_tasks: Mapped[list['Task']] = relationship(
+#         back_populates='watchers',
+#         secondary='task_watchers',
+#     )
+#     executioning_tasks: Mapped[list['Task']] = relationship(
+#         back_populates='executors',
+#         secondary='task_executors',
+#     )
 
 
 class Task(Base):
@@ -63,13 +77,15 @@ class Task(Base):
     group_id: Mapped[UUID | None] = mapped_column(ForeignKey(
         'groups.id',
         ondelete='CASCADE'))
-    watchers: Mapped[list['User'] | None] = relationship(
+    watchers: Mapped[list['User']] = relationship(
         back_populates='watching_tasks',
         secondary='task_watchers',
+        lazy='subquery'
     )
-    executors: Mapped[list['User'] | None] = relationship(
+    executors: Mapped[list['User']] = relationship(
         back_populates='executioning_tasks',
         secondary='task_executors',
+        lazy='subquery'
     )
 
     def to_schema(self) -> TaskResponse:

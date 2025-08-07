@@ -1,7 +1,6 @@
 __all__ = (
     'Base',
     'User',
-    'Status',
     'Task',
     'Board',
     'Column',
@@ -14,7 +13,6 @@ __all__ = (
 from .base import Base
 from .models import (
     User,
-    Status,
     Task,
     Board,
     Column,

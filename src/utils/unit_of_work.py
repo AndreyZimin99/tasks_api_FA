@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from types import TracebackType
 from typing import Any, Never
 
-from src.database.db_helper import async_session_maker
-from src.repositories.task import TaskRepository
+from database.db_helper import async_session_maker
+from repositories.task import TaskRepository
 
 
 class AbstractUnitOfWork(ABC):

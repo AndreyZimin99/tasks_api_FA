@@ -1,9 +1,15 @@
+from jwt.exceptions import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, HTTPException, status
 
-from auth_service import utils as auth_utils
-from auth_service.models.user import User
-from auth_service.schemas.user import CreateUser
+import utils as auth_utils
+from models.user import User
+from schemas.user import CreateUser, UserSchema
+from utils import send_email_event
+
+http_bearer = HTTPBearer()
 
 
 async def get_user_by_email(db: AsyncSession, email: str):
@@ -19,4 +25,21 @@ async def create_user(db: AsyncSession, user: CreateUser):
     db.add(db_user)
     await db.commit()
     await db.refresh(db_user)
+    await send_email_event(db_user.id, db_user.email)
     return db_user
+
+
+def get_current_token_payload(
+    credentials: HTTPAuthorizationCredentials = Depends(http_bearer)
+) -> UserSchema:
+    token = credentials.credentials
+    try:
+        payload = auth_utils.decode_jwt(
+            token=token
+        )
+    except InvalidTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f'invalid token error: {e}'
+        )
+    return payload

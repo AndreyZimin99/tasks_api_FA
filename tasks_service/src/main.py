@@ -60,6 +60,10 @@ def get_task_count_for_user(user_id):
 
 async def consume_messages():
     connection = await get_rabbit_connection()
+    if connection is None:
+        print("Не удалось установить соединение с брокером.")
+        return
+
     channel = await connection.channel()
 
     queue = await channel.declare_queue("task_request_queue")

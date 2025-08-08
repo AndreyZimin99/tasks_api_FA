@@ -5,7 +5,7 @@ from enum import Enum
 AsyncFunc = Callable[..., Awaitable[Any]]
 
 
-class Status(Enum):
+class TaskStatus(Enum):
     todo = 'todo'
     in_progress = 'in_progress'
     done = 'done'

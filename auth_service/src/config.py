@@ -14,11 +14,11 @@ class AuthJWT(BaseModel):
 
 class Settings(BaseSettings):
 
-    AUTH_HOST: str = 'postgres'
+    AUTH_HOST: str = 'db_auth'
     AUTH_PORT: int = 5432
     AUTH_DB: str = 'auth'
-    AUTH_USER: str = 'auth'
-    AUTH_PASSWORD: str = '1234'
+    AUTH_USER: str = 'user'
+    AUTH_PASSWORD: str = '1111'
 
     auth_jwt: AuthJWT = AuthJWT()
 

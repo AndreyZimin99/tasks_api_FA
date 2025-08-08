@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 from .base import Base, str_100, str_120, str_255
-from src.utils.custom_types import Status
+from src.utils.custom_types import TaskStatus
 from src.schemas.task import TaskResponse
 
 uuidpk = Annotated[
@@ -57,7 +57,7 @@ class Task(Base):
     id: Mapped[uuidpk]
     title: Mapped[str_255]
     description: Mapped[str | None] = mapped_column(Text)
-    status: Mapped[Status]
+    status: Mapped[TaskStatus]
     created_at: Mapped[created_at_user_task]
     author_id: Mapped[UUID] = mapped_column(ForeignKey(
         'users.id',

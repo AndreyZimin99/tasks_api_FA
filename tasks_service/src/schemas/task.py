@@ -2,14 +2,14 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, UUID4
 from datetime import datetime
 from typing import List
 
-from src.utils.custom_types import Status
+from src.utils.custom_types import TaskStatus
 from .user import UserDB
 
 
 class TaskBase(BaseModel):
     title: str = Field(min_length=3)
     description: str
-    status: Status
+    status: TaskStatus
     author_id: UUID4
 
     @field_validator('description')
@@ -37,7 +37,7 @@ class TaskUpdateRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     title: str | None = Field(None, min_length=3)
     description: str | None = None
-    status: Status | None = None
+    status: TaskStatus | None = None
     assignee_id: UUID4 | None = None
     column_id: UUID4 | None = None
     sprint_id: UUID4 | None = None
